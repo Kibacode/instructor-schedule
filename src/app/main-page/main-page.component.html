@@ -1,0 +1,13 @@
+<div class="instructor-grid">
+  <mat-card *ngFor="let instructor of instructors" class="instructor-grid">
+    <mat-card-header>
+      <mat-card-title
+        >{{ instructor.firstName }} {{ instructor.lastName }}</mat-card-title
+      >
+    </mat-card-header>
+    <mat-divider inset></mat-divider>
+    <mat-card-actions>
+      <a mat-button [routerLink]="['/detail', instructor.id]" >Check Schedule</a>
+    </mat-card-actions>
+  </mat-card>
+</div>

@@ -1,0 +1,145 @@
+<mat-card>
+  <mat-card-title>
+    <mat-label>{{ instructor.firstName }} {{ instructor.lastName }}</mat-label>
+  </mat-card-title>
+  <br />
+  <mat-card-content>
+    <p>
+      <mat-label
+        >Birthday: {{ instructor.birthday | date: "MM/dd/yyyy" }}</mat-label
+      >
+    </p>
+    <p>
+      <mat-label>Overall days: {{ instructor.overallDays }}</mat-label>
+    </p>
+    <mat-label></mat-label>
+    <mat-label></mat-label>
+  </mat-card-content>
+</mat-card>
+<br />
+<div *ngIf="!(add || update)">
+  <button mat-button (click)="addToggle()">Add new event</button>
+  <mat-divider> </mat-divider>
+  <div *ngIf="events.length > 0">
+    <table id="" mat-table [dataSource]="events" style="padding-bottom: 50px;">
+      <caption></caption>
+      <ng-container matColumnDef="startDate">
+        <th id="column-start-date" mat-header-cell *matHeaderCellDef>Start Date</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.startDate | date: "MM/dd/yyyy" }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="endDate">
+        <th id="column-end-date" mat-header-cell *matHeaderCellDef>End Date</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.endDate | date: "MM/dd/yyyy" }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="eventType">
+        <th id="column-event-type" mat-header-cell *matHeaderCellDef>Event Type</th>
+        <td mat-cell *matCellDef="let element">{{ element.eventType }}</td>
+      </ng-container>
+      <ng-container matColumnDef="description">
+        <th id="column-description" mat-header-cell *matHeaderCellDef>Description</th>
+        <td mat-cell *matCellDef="let element">{{ element.description }}</td>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <th id="column-actions" mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-button (click)="updateToggle(element)">Update</button>
+          <button mat-button color="warn" (click)="deleteDialog(element.id)">
+            Delete
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </div>
+
+  <div *ngIf="events.length <= 0">
+    <mat-card>
+      <mat-card-content>
+        <span>There's no events avaiable</span>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<div id="form-crud" *ngIf="add || update">
+  <div>
+    <mat-form-field style="display: none" [formGroup]="form" appearance="fill">
+      <mat-label>id</mat-label>
+      <input formControlName="id" matInput />
+    </mat-form-field>
+    <mat-label style="padding-right: 40px">Date range</mat-label>
+    <mat-form-field style="padding-left: 40px">
+      <mat-label style="padding-right: 40px">Start Date</mat-label>
+      <mat-label>End Date</mat-label>
+      <mat-date-range-input [formGroup]="form" [rangePicker]="picker">
+        <input matStartDate formControlName="start" placeholder="Start date" />
+        <input matEndDate formControlName="end" placeholder="End date" />
+        <mat-error *ngIf="form.controls.start.hasError('matStartDateInvalid')"
+          >Invalid start date</mat-error
+        >
+        <mat-error *ngIf="form.controls.end.hasError('matEndDateInvalid')"
+          >Invalid end date</mat-error
+        >
+      </mat-date-range-input>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-date-range-picker #picker></mat-date-range-picker>
+    </mat-form-field>
+  </div>
+  <div>
+    <mat-label style="padding-right: 40px">Event Type</mat-label>
+    <mat-form-field
+      [formGroup]="form"
+      appearance="outline"
+      style="padding-left: 40px"
+    >
+      <mat-label>Select</mat-label>
+      <mat-select formControlName="eventType">
+        <mat-option value="VACATION">Vacation</mat-option>
+        <mat-option value="PROJECT">Project</mat-option>
+        <mat-option value="SEMINAR">Seminar</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div>
+    <mat-label style="padding-right: 40px">Description</mat-label>
+    <mat-form-field
+      [formGroup]="form"
+      appearance="outline"
+      style="padding-left: 40px"
+    >
+      <mat-label>Textarea</mat-label>
+      <textarea
+        formControlName="description"
+        maxlength="50"
+        matInput
+      ></textarea>
+    </mat-form-field>
+  </div>
+  <div>
+    <button
+      *ngIf="add"
+      style="margin-right: 40px"
+      mat-raised-button
+      color="primary"
+      (click)="addEvent()"
+    >
+      Add
+    </button>
+    <button
+      *ngIf="update"
+      style="margin-right: 40px"
+      mat-raised-button
+      color="primary"
+      (click)="updateEvent()"
+    >
+      Update
+    </button>
+    <button mat-raised-button color="warn" (click)="refresh()">Cancel</button>
+  </div>
+</div>
